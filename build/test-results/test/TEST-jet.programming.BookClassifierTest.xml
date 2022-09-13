@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="jet.programming.BookClassifierTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2022-09-13T19:05:00" hostname="ip-192-168-1-104.ec2.internal" time="7.061">
+  <properties/>
+  <testcase name="parallelStream_whenBooksAreMoreThanNumberOfProcessors()" classname="jet.programming.BookClassifierTest" time="2.024"/>
+  <testcase name="stream_whenBooksAreLessThanNumberOfProcessors()" classname="jet.programming.BookClassifierTest" time="3.013"/>
+  <testcase name="completableFuture_whenBooksAreMoreThanNumberOfProcessors()" classname="jet.programming.BookClassifierTest" time="1.011"/>
+  <testcase name="numberOfProcessors()" classname="jet.programming.BookClassifierTest" time="0.001"/>
+  <testcase name="parallelStream_whenBooksAreLessThanNumberOfProcessors()" classname="jet.programming.BookClassifierTest" time="1.009"/>
+  <system-out><![CDATA[The operation took -1663095900919 ms
+The operation took -1663095906968 ms
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

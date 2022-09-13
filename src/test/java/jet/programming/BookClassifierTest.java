@@ -1,21 +1,32 @@
-# Completable Futures
+package jet.programming;
 
-Do you know that parallel stream in Java has performance limitations due to Java will use the number of available processors?
+import org.hamcrest.number.OrderingComparison;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-If you want to take advance of the latest Java features and overcome this problem, use CompletableFuture.
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.stream.Stream;
 
-You can create a ThreadPool greater than the number of available processors and reap the performance improvements.
-CompletableFuture uses lambdas, and the code is expressive.
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
+class BookClassifierTest {
 
-```java
-   @Test
+    private int availableProcessors;
+
+    @BeforeEach
+    public void setUp() {
+        availableProcessors = Runtime.getRuntime().availableProcessors();
+    }
+
+    @Test
     public void numberOfProcessors() {
         assertThat(availableProcessors, is(equalTo(8)));
     }
-```
 
-```java
     @Test
     public void completableFuture_whenBooksAreMoreThanNumberOfProcessors() {
         Executor executor = Executors.newFixedThreadPool(10);
@@ -33,26 +44,8 @@ CompletableFuture uses lambdas, and the code is expressive.
         assertThat(timeInSeconds, OrderingComparison.lessThanOrEqualTo(1));
 
     }
-```
-```java
-   @Test
-   public void stream_whenBooksAreLessThanNumberOfProcessors() {
-        long start = System.currentTimeMillis();
-        var categories = Stream.of(
-        new Book("1", "Rich Hickey"),
-        new Book("2", "Uncle Bob"),
-        new Book("3", "Martin Fowler"))
-        .map(BookClassifier::apply).toList();
 
-        int timeInSeconds = getTimeInSeconds(start);
-        assertThat(categories.size(), is(equalTo(3)));
-        assertThat(timeInSeconds, OrderingComparison.greaterThanOrEqualTo(1));
-        assertThat(timeInSeconds, OrderingComparison.lessThanOrEqualTo(3));
 
-        }
-```
-
-```java
     @Test
     public void parallelStream_whenBooksAreMoreThanNumberOfProcessors() {
         long start = System.currentTimeMillis();
@@ -86,4 +79,41 @@ CompletableFuture uses lambdas, and the code is expressive.
         assertThat(timeInSeconds, OrderingComparison.lessThanOrEqualTo(2));
 
     }
-```
+
+    @Test
+    public void stream_whenBooksAreLessThanNumberOfProcessors() {
+        long start = System.currentTimeMillis();
+        var categories = Stream.of(
+                        new Book("1", "Rich Hickey"),
+                        new Book("2", "Uncle Bob"),
+                        new Book("3", "Martin Fowler"))
+                .map(BookClassifier::apply).toList();
+
+        int timeInSeconds = getTimeInSeconds(start);
+        assertThat(categories.size(), is(equalTo(3)));
+        assertThat(timeInSeconds, OrderingComparison.greaterThanOrEqualTo(1));
+        assertThat(timeInSeconds, OrderingComparison.lessThanOrEqualTo(3));
+
+    }
+
+    private Stream<Book> getBooks() {
+        return Stream.of(
+                new Book("1", "Uncle Bob 1"),
+                new Book("2", "Rich Hickey 2"),
+                new Book("3", "Andy Hunt 3"),
+                new Book("4", "Erich Gamma 4"),
+                new Book("5", "Steve McConnell 5"),
+                new Book("6", "Martin Kleppmann 6"),
+                new Book("7", "Eric Evans 7"),
+                new Book("8", " Michael C. Feathers 8"),
+                new Book("9", "Kent Beck 9"),
+                new Book("10", "Martin Fowler 10")
+        );
+    }
+
+    private int getTimeInSeconds(long start) {
+        return (int) ((System.currentTimeMillis() - start) / 1000);
+    }
+
+
+}
