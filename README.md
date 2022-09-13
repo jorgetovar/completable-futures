@@ -7,7 +7,7 @@ If you want to take advance of the latest Java features and overcome this proble
 You can create a ThreadPool greater than the number of available processors and reap the performance improvements.
 CompletableFuture uses lambdas, and the code is expressive.
 
-### For example, my machine has 8 processors
+### My machine has 8 processors
 ```java
    @Test
     public void numberOfProcessors() {
@@ -15,7 +15,7 @@ CompletableFuture uses lambdas, and the code is expressive.
     }
 ```
 
-### With more than 10 processes of 1 second, we would have everything processed in 1-second approx
+### 1 Second: CompletableFuture implementation has the best performance
 ```java
     @Test
     public void completableFuture_whenBooksAreMoreThanNumberOfProcessors() {
@@ -36,7 +36,7 @@ CompletableFuture uses lambdas, and the code is expressive.
     }
 ```
 
-### With more than 10 processes of 1 second, we would have everything processed in more than 2-seconds 
+### 2 Seconds: Parallel Stream implementation has some limitations
 Because our current limitation would have to process 8 books first and then 2 more
 ```java
     @Test
@@ -48,13 +48,12 @@ public void parallelStream_whenBooksAreMoreThanNumberOfProcessors() {
         .toList();
         int timeInSeconds = getTimeInSeconds(start);
 
-        System.out.printf("The operation took %s ms%n", timeInSeconds - start);
         assertThat(categories.size(), is(equalTo(10)));
-        assertThat(timeInSeconds, OrderingComparison.greaterThanOrEqualTo(1));
+        assertThat(timeInSeconds, OrderingComparison.greaterThanOrEqualTo(2));
         assertThat(timeInSeconds, OrderingComparison.lessThanOrEqualTo(2));
         }
 ```
-### With more than 10 processes of 1 second, we would have everything processed in more than 1-second less than 2-seconds
+### 1 Second: Parallel Stream implementation within the limitations
 Because we are within the limit of the available processors
 ```java
 
@@ -72,25 +71,23 @@ Because we are within the limit of the available processors
         System.out.printf("The operation took %s ms%n", timeInSeconds - start);
         assertThat(categories.size(), is(equalTo(limit)));
         assertThat(timeInSeconds, OrderingComparison.greaterThanOrEqualTo(1));
-        assertThat(timeInSeconds, OrderingComparison.lessThanOrEqualTo(2));
+        assertThat(timeInSeconds, OrderingComparison.lessThanOrEqualTo(1));
 
     }
 ```
-### Synchronous implementation has the worst performance
+### 10 Seconds: Stream Synchronous implementation has the worst performance 
 ```java
    @Test
    public void stream_whenBooksAreLessThanNumberOfProcessors() {
         long start = System.currentTimeMillis();
-        var categories = Stream.of(
-        new Book("1", "Rich Hickey"),
-        new Book("2", "Uncle Bob"),
-        new Book("3", "Martin Fowler"))
+        var categories = getBooks()
         .map(BookClassifier::apply).toList();
 
         int timeInSeconds = getTimeInSeconds(start);
-        assertThat(categories.size(), is(equalTo(3)));
-        assertThat(timeInSeconds, OrderingComparison.greaterThanOrEqualTo(1));
-        assertThat(timeInSeconds, OrderingComparison.lessThanOrEqualTo(3));
+        assertThat(categories.size(), is(equalTo(10)));
+        assertThat(timeInSeconds, OrderingComparison.greaterThanOrEqualTo(9));
+        assertThat(timeInSeconds, OrderingComparison.lessThanOrEqualTo(10));
+        System.out.printf("The stream operation took %s ms%n", timeInSeconds);
 
         }
 ```

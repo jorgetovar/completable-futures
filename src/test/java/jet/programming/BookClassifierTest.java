@@ -42,6 +42,7 @@ class BookClassifierTest {
         assertThat(categories.size(), is(equalTo(10)));
         assertThat(timeInSeconds, OrderingComparison.greaterThanOrEqualTo(1));
         assertThat(timeInSeconds, OrderingComparison.lessThanOrEqualTo(1));
+        System.out.printf("The completableFuture operation took %s ms%n", timeInSeconds);
 
     }
 
@@ -55,10 +56,10 @@ class BookClassifierTest {
                 .toList();
         int timeInSeconds = getTimeInSeconds(start);
 
-        System.out.printf("The operation took %s ms%n", timeInSeconds - start);
         assertThat(categories.size(), is(equalTo(10)));
-        assertThat(timeInSeconds, OrderingComparison.greaterThanOrEqualTo(1));
+        assertThat(timeInSeconds, OrderingComparison.greaterThanOrEqualTo(2));
         assertThat(timeInSeconds, OrderingComparison.lessThanOrEqualTo(2));
+        System.out.printf("The parallelStream10 operation took %s ms%n", timeInSeconds);
 
     }
 
@@ -73,26 +74,24 @@ class BookClassifierTest {
                 .toList();
         int timeInSeconds = getTimeInSeconds(start);
 
-        System.out.printf("The operation took %s ms%n", timeInSeconds - start);
         assertThat(categories.size(), is(equalTo(limit)));
         assertThat(timeInSeconds, OrderingComparison.greaterThanOrEqualTo(1));
-        assertThat(timeInSeconds, OrderingComparison.lessThanOrEqualTo(2));
+        assertThat(timeInSeconds, OrderingComparison.lessThanOrEqualTo(1));
+        System.out.printf("The parallelStream7 operation took %s ms%n", timeInSeconds);
 
     }
 
     @Test
     public void stream_whenBooksAreLessThanNumberOfProcessors() {
         long start = System.currentTimeMillis();
-        var categories = Stream.of(
-                        new Book("1", "Rich Hickey"),
-                        new Book("2", "Uncle Bob"),
-                        new Book("3", "Martin Fowler"))
+        var categories = getBooks()
                 .map(BookClassifier::apply).toList();
 
         int timeInSeconds = getTimeInSeconds(start);
-        assertThat(categories.size(), is(equalTo(3)));
-        assertThat(timeInSeconds, OrderingComparison.greaterThanOrEqualTo(1));
-        assertThat(timeInSeconds, OrderingComparison.lessThanOrEqualTo(3));
+        assertThat(categories.size(), is(equalTo(10)));
+        assertThat(timeInSeconds, OrderingComparison.greaterThanOrEqualTo(9));
+        assertThat(timeInSeconds, OrderingComparison.lessThanOrEqualTo(10));
+        System.out.printf("The stream operation took %s ms%n", timeInSeconds);
 
     }
 
